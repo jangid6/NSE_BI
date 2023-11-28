@@ -41,17 +41,8 @@ for sqCode in sqcode_ListNifty50:
     except IndexError:
         print(f"IndexError for {sqCode}: Data not available")
         
-nifty50_OverviewTable_SF = pd.concat(result_dfs, ignore_index=True)
-nifty50DailyTable = pd.DataFrame()
+nifty50DailyTable = pd.concat(result_dfs, ignore_index=True).iloc[:,:-2]
 
-for scripCode in nifty50_OverviewTable_SF['scripCode']:
-    try:
-        stock_data = b.getQuote(scripCode)
-        stock_df = pd.DataFrame([stock_data])
-        nifty50DailyTable = pd.concat([nifty50DailyTable, stock_df.iloc[:, :-2]], ignore_index=True)
-        time.sleep(1.5)
-    except IndexError:
-        print(f"IndexError for {scripCode}: Data not available")
 nifty50DailyTable.rename(columns={'group': 'sharegroup'}, inplace=True)
 nifty50DailyTable.rename(columns={'52weekHigh': 'fiftytwoweekHigh'}, inplace=True)
 nifty50DailyTable.rename(columns={'52weekLow': 'fiftytwoweekLow'}, inplace=True)
@@ -78,24 +69,11 @@ if 'totalTradedValueCr' not in nifty50DailyTableTest_SF.columns:
     # Drop original columns
     nifty50DailyTableTest_SF.drop(['totalTradedValue', 'totalTradedQuantity','twoWeekAvgQuantity', 'marketCapFull', 'marketCapFreeFloat'], axis=1, inplace=True)
 
-
-# nifty50DailyTableTest_SF.head(n=2)
-
-# Azure SQL Database connection parameters
-# server = '<your_server_name>.database.windows.net'
-# database = '<your_database_name>'
-# username = '<your_username>'
-# password = '<your_password>'
-# driver = '{ODBC Driver 17 for SQL Server}'
-
 server = 'localhost'
 database = 'nifty50'
 username = 'sa'
 password = 'jangid6'
 driver = 'ODBC Driver 17 for SQL Server'
-
-# Azure SQL Database table name
-
 
 # Azure SQL Database connection string
 conn_str = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
